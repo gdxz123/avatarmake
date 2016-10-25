@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>素材检测Beta2</title>
+	<!--script_file-->
+	<script src="lib/d3.v3.min.js"></script>
+	<script src="lib/zepto.min.js"></script>
+	<script src="lib/JTouch.js"></script>
+	<script src="lib/Translate.js"></script>
+	<!--绘制bubble-->
+	<script src="js/dataparse.js"></script>
+	<script src="js/personchange.js"></script>
+	<!--数据导入-->
+	<script src="data/data.js"></script>
+	<!--css_file-->
+	<link href="css/reset.css" type="text/css" rel="stylesheet" />
+	<link href="css/edit.css" type="text/css" rel="stylesheet" />
+	<style>
+		body{
+			font-family: "微软雅黑";
+		}
+		.pathS{
+			fill-rule:evenodd;
+			clip-rule:evenodd;
+		}
+		html,body{width:100%;height:100%;margin:0;padding:0;}
+		ul,li{list-style:none;margin:0;padding:0;}
+
+		#touch{
+			width:100%;
+			/*height:100%;*/
+			overflow:hidden;
+		}
+		#touch ul{height:100%;}
+		#touch li{height:100%;width:100%;float:left;}
+		
+		.partDivAll{
+			overflow:auto;
+			/*overflow: hidden;*/
+		}
+		.partDiv{
+			border:1px solid #e3e3e3;
+			float:left;
+		}
+		#touchNav{
+			height:44px;
+			line-height: 44px;
+			width:200px;
+			overflow-x: auto;
+			overflow-y: hidden;
+			border-bottom:1px solid gray;
+		}
+		#submenuList{
+			width:2000px;
+			overflow:hidden;
+		}
+		.submenu{
+			float:left;
+			width:80px;
+			height:40px;
+			line-height: 40px;
+			text-align: center;
+			border:1px solid #eee;
+		}
+		.submenu:hover{
+			cursor:pointer;
+		}
+		.chossen{
+			border-bottom: 4px solid #025afb;
+		}
+		#changeIdDiv{
+			position:absolute;
+			top:0px;
+			right:0px;
+			width:200px;
+			background:#fff;
+			background:-webkit-gradient(linear, left top, left bottom, from(#08aeec),color-stop(1, #fff));
+
+			padding:10px 5px 20px 5px;
+			text-align: center;
+		}
+		.inputId{
+			width:80px;
+			margin:10px 5px 0 0;
+		}
+		#contentDIV{
+			overflow: hidden;
+		}
+  	</style>
+</head>
+<body>
+<div id="contentDIV">
+</div>
+<div id="controlDiv">
+	<div id="touchNav">
+		<div id="submenuList">
+			<div class="submenu" id="submenu0">眼镜</div>
+			<div class="submenu" id="submenu1">头发</div>
+			<div class="submenu" id="submenu2">嘴巴</div>
+			<div class="submenu" id="submenu3">脸型</div>
+			<div class="submenu" id="submenu4">眼睛</div>
+			<div class="submenu" id="submenu5">眉毛</div>
+			<div class="submenu" id="submenu6">衣服</div>
+			<div class="submenu" id="submenu7">鼻子</div>
+			<div class="submenu" id="submenu8">特征</div>
+			<div class="submenu" id="submenu9">帽子</div>
+			<div class="submenu" id="submenu10">爱好</div>
+			<div class="submenu" id="submenu11">背景</div>
+			<div class="submenu" id="submenu12">表情</div>
+		</div>
+	</div>
+	<div id="touch">
+		<ul id="liWrap">
+			<li class="menuDiv" id="menuDiv0"><div id="contentDiv0"></div></li>
+			<li class="menuDiv" id="menuDiv1"><div id="contentDiv1"></div></li>
+			<li class="menuDiv" id="menuDiv2"><div id="contentDiv2"></div></li>
+			<li class="menuDiv" id="menuDiv3"><div id="contentDiv3"></div></li>
+			<li class="menuDiv" id="menuDiv4"><div id="contentDiv4"></div></li>
+			<li class="menuDiv" id="menuDiv5"><div id="contentDiv5"></div></li>
+			<li class="menuDiv" id="menuDiv6"><div id="contentDiv6"></div></li>
+			<li class="menuDiv" id="menuDiv7"><div id="contentDiv7"></div></li>
+			<li class="menuDiv" id="menuDiv8"><div id="contentDiv8"></div></li>
+			<li class="menuDiv" id="menuDiv9"><div id="contentDiv9"></div></li>
+			<li class="menuDiv" id="menuDiv10"><div id="contentDiv10"></div></li>
+			<li class="menuDiv" id="menuDiv11"><div id="contentDiv11"></div></li>
+			<li class="menuDiv" id="menuDiv12"><div id="contentDiv12"></div></li>
+		</ul>
+	</div>
+</div>
+	
+<script>
+var navArray=["glass","hair","mouth","face","eye","eyebrow","cloth","nose","feature","hat","hobby","background","express"]
+var nowNav=0;
+/*标记变量roleA*/
+var sexTag={"id":0};
+var bodyTag={"id":1};
+var faceTag={"id":1,"color":"#F4CDA7","x":0,"y":0};
+var eyebrowTag={"id":29,"x":0,"y":0};
+var glassTag={"id":0,"x":0,"y":0};
+var bubbleTag={"id":0,"x":0,"y":0};
+var hatTag={"id":0,"x":0,"y":0};
+var featureTag={"id":0,"x":0,"y":0};
+var backgroundTag={"id":29,"x":0,"y":0};
+var clothTag={"id":1,"x":0,"y":0};
+var eyeTag={"id":5,"x":0,"y":0};
+var hobbyTag={"id":5,"x":0,"y":0};
+var hairTag={"id":48,"color":"#F29600","x":0,"y":0};
+var mouthTag={"id":12,"x":0,"y":0};
+var expressTag={"id":0,"x":0,"y":0};
+var noseTag={"id":0,"x":0,"y":0};
+//坐标数据
+var svgWidth=640;
+var svgHeight=640;
+var winWidth=$(window).get(0).innerWidth;
+var winHeight=$(window).get(0).innerHeight;
+var minWidth=winWidth<winHeight?winWidth:winHeight;
+
+//新建画布
+var svg=d3.select("#contentDIV").append("svg")
+	.attr("xmlns","http://www.w3.org/2000/svg")
+	.attr("version","1.1")
+	.attr("id","contentSVG")
+	.attr("width",svgWidth)
+	.attr("height",svgHeight)
+	.attr("viewBox","0 0 "+svgWidth+" "+svgHeight)
+	.attr("xml:space","preserve");
+var background2=svg.append("g").attr("id","background2");
+var background3=svg.append("g").attr("id","background3");
+var background=svg.append("g").attr("id","background");
+var bdBubble=svg.append("g").attr("id","bdBubble").attr("transform","translate(-500,0)");
+
+var roleA=svg.append("g").attr("id","roleA");
+/*roleA*/
+var personSVG=roleA.append("g").attr("id","person");
+var backHairSVG=personSVG.append("g").attr("id","backHairSVG");
+var bodySVG=personSVG.append("g").attr("id","body");
+var headSVG=personSVG.append("g").attr("id","head");
+var hobby=roleA.append("g").attr("id","hobby");
+var bubble=roleA.append("g").attr("id","bubble");
+/*头部编辑*/
+var backHair=backHairSVG.append("g").attr("id","backHair");
+var middleHair=headSVG.append("g").attr("id","middleHair");
+var face=headSVG.append("g").attr("id","face");
+var facial =headSVG.append("g").attr("id","facial");
+var eyebrow=facial.append("g").attr("id","eyebrow");
+var mouth=facial.append("g").attr("id","mouth");
+var eye=facial.append("g").attr("id","eye");
+var nose=facial.append("g").attr("id","nose");
+var express=headSVG.append("g").attr("id","express");
+var feature=headSVG.append("g").attr("id","feature");
+var frontHair=headSVG.append("g").attr("id","frontHair");
+var express2=headSVG.append("g").attr("id","express2");
+var glass=headSVG.append("g").attr("id","glass");
+var hat=headSVG.append("g").attr("id","hat");
+
+/*身体编辑*/
+var body=bodySVG.append("g").attr("id","body");
+var cloth=bodySVG.append("g").attr("id","cloth");
+
+var personTag1={
+	"sexual":{"id":0},
+	"hair":{"id":20000,"color":"#F29600"},
+	"face":{"id":20000,"color":"#F4CDA7"},
+	"mouth":{"id":2},
+	"eye":{"id":20010},
+	"eyebrow":{"id":1},
+	"hat":{"id":0},
+	"background":{"id":0},
+	"hobby":{"id":0},
+	"cloth":{"id":22},
+	"bubble":{"id":0},
+	"feature":{"id":0},
+	"glass":{"id":0},
+	"express":{"id":0},
+	"nose":{"id":0}
+}
+
+initHeadEdit(personTag1);
+initSmallPicAll();
+
+function initHeadEdit(personTag1){
+	var personTagAll,person1Tag;
+	if(typeof personTag1=="string"){
+		personTagAll= eval("(" + personTag1 + ")");
+		person1Tag = personTagAll.personTagA;
+	}else{
+		person1Tag=personTag1;
+	}
+	recordTag(person1Tag)
+	//人物初始化
+	personInitA();
+	// personSelect();
+	//屏幕最大化
+	resizeSVG();
+	$(window).resize(function(){
+		resizeSVG()
+	});
+	setTimeout(resizeSVG,30);
+}
+//人物初始化
+function personInitA() {
+	bodyChange(1);
+	hairChange(hairTag.id);
+	mouthChange(mouthTag.id);
+	eyeChange(eyeTag.id);
+	eyebrowChange(eyebrowTag.id);
+	noseChange(noseTag.id);
+	expressChange(expressTag.id);
+	faceChange(faceTag.id);
+	hatChange(hatTag.id);
+	backgroundChange(backgroundTag.id);
+	hobbyChange(hobbyTag.id);
+	clothChange(clothTag.id);
+	bubbleChange(bubbleTag.id);
+	featureChange(featureTag.id);
+	glassChange(glassTag.id);
+}
+function recordTag(person1Tag,person2Tag){
+	sexTag.id=person1Tag.sexual.id;
+	hairTag.id=person1Tag.hair.id;
+	hairTag.color=person1Tag.hair.color;
+	faceTag.id=person1Tag.face.id;
+	faceTag.color=person1Tag.face.color;
+	mouthTag.id=person1Tag.mouth.id;
+	eyeTag.id=person1Tag.eye.id;
+	eyebrowTag.id=person1Tag.eyebrow.id;
+	hatTag.id=person1Tag.hat.id;
+	backgroundTag.id=person1Tag.background.id;
+	hobbyTag.id=person1Tag.hobby.id;
+	clothTag.id=person1Tag.cloth.id;
+	bubbleTag.id=person1Tag.bubble.id;
+	featureTag.id=person1Tag.feature.id;
+	glassTag.id=person1Tag.glass.id;
+	expressTag.id=person1Tag.express.id;
+	noseTag.id=person1Tag.nose.id;
+}
+//屏幕自适应
+function resizeSVG() {
+	d3.select("#contentSVG").attr("width",$(window).get(0).innerWidth)
+		.attr("height",$(window).get(0).innerHeight/2);
+}
+function bubbleEdit(inputString){
+	var bubbleTextArray=inputString.split("&el&");
+	d3.selectAll(".bubbleEditText").style("white-space","pre").text("");
+	for(var i=0;i<bubbleTextArray.length;i++){
+		$("#bubbleEditText"+i).text(bubbleTextArray[i]);
+	}
+	if(bubbleTextArray.length==1){
+		d3.select("#bubbleEditText0").attr("y",150);
+	}
+	if(bubbleTextArray.length==2){
+		d3.select("#bubbleEditText0").attr("y",120);
+		d3.select("#bubbleEditText1").attr("y",180);
+	}
+	if(bubbleTextArray.length==3){
+		d3.select("#bubbleEditText0").attr("y",80);
+		d3.select("#bubbleEditText1").attr("y",140);
+		d3.select("#bubbleEditText2").attr("y",200);
+	}
+}
+function initSmallPicAll(){
+	var partObj={
+		"hair":"hairData",
+		"face":"faceData",
+		"eyebrow":"eyebrowData",
+		"eye":"eyeData",
+		"mouth":"mouthData",
+		"nose":"noseData",
+		"feature":"featureData",
+		"glass":"glassData",
+		"cloth":"clothData",
+		"hat":"hatData",
+		"hobby":"hobbyData",
+		"background":"backgroundData",
+		"express":"expressData",
+	}
+	$("#controlDiv").css("height",$(window).height()/2-30)
+	var partDivWidth=$(window).width()/3;
+	var partDivHeight=($(window).height()/2-74)/3;
+
+	//横向滚动条
+	var temScale=winWidth/6;
+	$(".submenu").css("width",100);
+	$("#touchNav").css("width",winWidth);
+	$("#submenuList").css("width",winWidth);
+
+	//加载小图素材
+	initSmallPic("glass",personTag1,"#contentDiv0");
+	initSmallPic("hair",personTag1,"#contentDiv1");
+	initSmallPic("mouth",personTag1,"#contentDiv2");
+	initSmallPic("face",personTag1,"#contentDiv3");
+	initSmallPic("eye",personTag1,"#contentDiv4");
+	initSmallPic("eyebrow",personTag1,"#contentDiv5");
+	initSmallPic("cloth",personTag1,"#contentDiv6");
+	initSmallPic("nose",personTag1,"#contentDiv7");
+	initSmallPic("feature",personTag1,"#contentDiv8");
+	initSmallPic("hat",personTag1,"#contentDiv9");
+	initSmallPic("hobby",personTag1,"#contentDiv10");
+	initSmallPic("background",personTag1,"#contentDiv11");
+	initSmallPic("express",personTag1,"#contentDiv12");
+	//初始选择
+	$("#submenu0").addClass("chossen");
+
+	//滚动事件
+	var timeout = false; 
+	$(".partDiv").on("click",smalPictureClick)
+	//Translate Init
+	var Trans = new Translate({
+		obj:document.getElementById('liWrap'),
+	});
+
+	var objTouch = document.getElementById('touch');
+	var Touches = JTouch(objTouch);
+	//横向点击事件
+	$(".submenu").on("click",function(){
+		$("#submenu"+nowNav).removeClass("chossen");
+		nowNav=$(this).attr("id").replace("submenu","");
+		Trans.next(nowNav);
+		$("#submenu"+nowNav).addClass("chossen");
+	})
+	function smalPictureClick(){
+		if(navArray[nowNav]=="glass"){
+			glassChange($(this).attr("id").replace("glass",""));
+		}else if(navArray[nowNav]=="hair"){
+			hairChange($(this).attr("id").replace("hair",""));
+		}else if(navArray[nowNav]=="mouth"){
+			expressChange(0);
+			mouthChange($(this).attr("id").replace("mouth",""));
+		}else if(navArray[nowNav]=="face"){
+			faceChange($(this).attr("id").replace("face",""));
+		}else if(navArray[nowNav]=="eye"){
+			expressChange(0);
+			eyeChange($(this).attr("id").replace("eye",""));
+		}else if(navArray[nowNav]=="eyebrow"){
+			expressChange(0);
+			eyebrowChange($(this).attr("id").replace("eyebrow",""));
+		}else if(navArray[nowNav]=="cloth"){
+			clothChange($(this).attr("id").replace("cloth",""));
+		}else if(navArray[nowNav]=="nose"){
+			expressChange(0);
+			noseChange($(this).attr("id").replace("nose",""));
+		}else if(navArray[nowNav]=="feature"){
+			featureChange($(this).attr("id").replace("feature",""));
+		}else if(navArray[nowNav]=="hat"){
+			hatChange($(this).attr("id").replace("hat",""));
+		}else if(navArray[nowNav]=="hobby"){
+			hobbyChange($(this).attr("id").replace("hobby",""));
+		}else if(navArray[nowNav]=="background"){
+			backgroundChange($(this).attr("id").replace("bg",""));
+		}else if(navArray[nowNav]=="express"){
+			expressChange($(this).attr("id").replace("express",""));
+		}
+	}
+	function initSmallPic(part,personTag,divId){
+		var countI=0;
+		var smallPicWidth=partDivWidth;
+		var smallPicHeight=partDivHeight;
+		var partArrays=window[partObj[part]];
+		var partDivAll=d3.select(divId).append("div").attr("class","partDivAll").style({"height":($(window).height()/2-74)+"px"});
+		if(part=="glass"){
+			var glassPic=partDivAll.append("div").attr("class","partDiv").attr("id","glass0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("glass",""));
+				if(index>=20012){
+					//眼镜
+					var glassPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					glassPartDiv.append("div").text("s7_"+index+".png");
+					glassPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/glass/pic_s7_"+index+".png");
+				}
+			}
+		}else if(part=="mouth"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("mouth",""));
+				if(index>=20018){
+					//嘴巴
+					var mouthPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					mouthPartDiv.append("div").text("s5_"+index+".png");
+					mouthPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/mouth/pic_s5_"+index+".png");
+				}
+			}
+		}else if(part=="face"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("face",""));
+				if(index>=20000){
+					//脸部
+					var mouthPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					mouthPartDiv.append("div").text("s2_"+index+".png");
+					mouthPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/face/pic_s2_"+index+".png");
+				}
+			}
+		}else if(part=="eye"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("eye",""));
+				if(index>20037){
+					//眼睛
+					var mouthPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					mouthPartDiv.append("div").text("s4_"+index+".png");
+					mouthPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/eye/pic_s4_"+index+".png");
+				}
+			}
+		}else if(part=="eyebrow"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("eyebrow",""));
+				if(index>=20000){
+					//眉毛
+					var eyebrowPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					eyebrowPartDiv.append("div").text("s3_"+index+".png");
+					eyebrowPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/eyebrow/pic_s3_"+index+".png");
+				}
+			}
+		}else if(part=="cloth"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("cloth",""));
+				if(30109<=index&&index<=30121||20163<=index&&index<=20168){
+					//衣服
+					var clothPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					clothPartDiv.append("div").text("s8_"+index+".png");
+					clothPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/cloth/pic_s8_"+index+".png");
+				}
+			}
+		}else if(part=="nose"){
+			var nosePic=partDivAll.append("div").attr("class","partDiv").attr("id","nose0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("nose",""));
+				if(20000<index){
+					//鼻子
+					var nosePartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					nosePartDiv.append("div").text("s14_"+index+".png");
+					nosePartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/nose/pic_s14_"+index+".png");
+				}
+			}
+		}else if(part=="feature"){
+			partDivAll.append("div").attr("class","partDiv").attr("id","feature0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("feature",""));
+				if(20000<index){
+					//特征
+					var featurePartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					featurePartDiv.append("div").text("s6_"+index+".png");
+					featurePartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/feature/pic_s6_"+index+".png");
+				}
+			}
+		}else if(part=="hat"){
+			partDivAll.append("div").attr("class","partDiv").attr("id","hat0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("hat",""));
+				if(20091<=index){
+					//帽子
+					var hatPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					hatPartDiv.append("div").text("s9_"+index+".png");
+					hatPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/hat/pic_s9_"+index+".png");
+				}
+			}
+		}else if(part=="hobby"){
+			partDivAll.append("div").attr("class","partDiv").attr("id","hobby0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("hobby",""));
+				if(20147<index){
+					//爱好
+					var hobbyPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					hobbyPartDiv.append("div").text("s10_"+index+".png");
+					hobbyPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/hobby/pic_s10_"+index+".png");
+				}
+			}
+		}else if(part=="background"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("bg",""));
+				if(20023<index){
+					//背景
+					var backgroundPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					backgroundPartDiv.append("div").text("s11_"+index+".png");
+					backgroundPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/background/pic_s11_"+index+".png");
+				}
+			}
+		}else if(part=="express"){
+			partDivAll.append("div").attr("class","partDiv").attr("id","express0").append("img").attr("width",smallPicHeight+"px").attr("height",smallPicHeight+"px").attr("src","pic/other/show_no.png");
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("express",""));
+				if(20047<=index){
+					//表情
+					var expressPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					expressPartDiv.append("div").text("s13_"+index+".png");
+					expressPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/express/pic_s13_"+index+".png");
+				}
+			}
+		}else if(part=="hair"){
+			for(var partVar in partArrays){
+				var index=parseInt(partVar.replace("hair",""));
+				//头发
+				if(20056<index&&index<30000){
+					var hairPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					hairPartDiv.append("div").text("s1_"+index+".png");
+					hairPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/hair/pic_s1_"+index+".png");
+				}else if(index>30000){
+					var hairPartDiv=partDivAll.append("div").attr("class","partDiv").attr("id",partVar);
+					hairPartDiv.append("div").text("s1_g_"+index+".png");
+					hairPartDiv.append("img").attr("width",smallPicHeight+"px").attr("height",(smallPicHeight-20)+"px").attr("src","pic/hair/pic_s1_g_"+index+".png");
+				}
+			}
+		}
+	}
+}
+</script>
+
+<div id="changeIdDiv">
+	头发：<input type="text" id="hairIdInput" value="20000" class="inputId"><button onclick="try{hairChange(document.getElementById('hairIdInput').value++);}catch(e){alert('木油素材');document.getElementById('hairIdInput').value=20000;}">改变</button>
+	<br>
+	发色：<input type="text" id="hairColorIdInput" value="#F29600" class="inputId"><button onclick="try{hairColorChange(document.getElementById('hairColorIdInput').value);}catch(e){alert('木有颜色');document.getElementById('hairColorIdInput').value='#F29600';}">改变</button>
+	<br>
+	脸型：<input type="text" id="faceIdInput" value="20000" class="inputId"><button onclick="try{faceChange(document.getElementById('faceIdInput').value++);}catch(e){alert('木油素材');document.getElementById('faceIdInput').value=20000}">改变</button>
+	<br>
+	肤色：<input type="text" id="faceColorIdInput" value="#F4CDA7" class="inputId"><button onclick="try{faceColorChange(document.getElementById('faceColorIdInput').value);}catch(e){alert('木有颜色');document.getElementById('faceColorIdInput').value='#F4CDA7'}">改变</button>
+	<br>
+	眉毛：<input type="text" id="eyebrowIdInput" value="1" class="inputId"><button onclick="try{eyebrowChange(document.getElementById('eyebrowIdInput').value++);}catch(e){alert('木油素材');document.getElementById('eyebrowIdInput').value=1;}">改变</button>
+	<br>
+	眼睛：<input type="text" id="eyeIdInput" value="20010" class="inputId"><button onclick="try{eyeChange(document.getElementById('eyeIdInput').value++);}catch(e){alert('木油素材');document.getElementById('eyeIdInput').value=20010;}">改变</button>
+	<br>
+	嘴巴：<input type="text" id="mouthIdInput" value="2" class="inputId"><button onclick="try{mouthChange(document.getElementById('mouthIdInput').value++);}catch(e){alert('木油素材');document.getElementById('mouthIdInput').value=2}">改变</button>
+	<br>
+	鼻子：<input type="text" id="noseIdInput" value="0" class="inputId"><button onclick="try{noseChange(document.getElementById('noseIdInput').value++);}catch(e){alert('木油素材');document.getElementById('noseIdInput').value=0}">改变</button>
+	<br>
+	特征：<input type="text" id="featureIdInput" value="0" class="inputId"><button onclick="try{featureChange(document.getElementById('featureIdInput').value++);}catch(e){alert('木油素材');document.getElementById('featureIdInput').value=0;}">改变</button>
+	<br>
+	眼镜：<input type="text" id="glassIdInput" value="0" class="inputId"><button onclick="try{glassChange(document.getElementById('glassIdInput').value++);}catch(e){alert('木油素材');document.getElementById('glassIdInput').value=0;}">改变</button>
+	<br>
+	衣服：<input type="text" id="clothIdInput" value="22" class="inputId"><button onclick="try{clothChange(document.getElementById('clothIdInput').value++);}catch(e){alert('木油素材');document.getElementById('clothIdInput').value=22;}">改变</button>
+	<br>
+	爱好：<input type="text" id="hobbyIdInput" value="0" class="inputId"><button onclick="try{hobbyChange(document.getElementById('hobbyIdInput').value++);}catch(e){alert('木油素材');document.getElementById('hobbyIdInput').value=0;}">改变</button>
+	<br>
+	背景：<input type="text" id="backgroundIdInput" value="0" class="inputId"><button onclick="try{backgroundChange(document.getElementById('backgroundIdInput').value++);}catch(e){alert('木油素材');document.getElementById('backgroundIdInput').value=0;}">改变</button>
+	<br>
+	表情：<input type="text" id="expressIdInput" value="0" class="inputId"><button onclick="try{expressChange(document.getElementById('expressIdInput').value++);}catch(e){alert('木油素材');document.getElementById('expressIdInput').value=0;}">改变</button>
+	<br>
+	字报：<input type="text" id="bdBubbleIdInput" value="0" class="inputId"><button onclick="try{bdBubbleChange(document.getElementById('bdBubbleIdInput').value++);}catch(e){alert('木油素材');document.getElementById('bdBubbleIdInput').value=0;}">改变</button>
+</div>
+</body>
+</html>

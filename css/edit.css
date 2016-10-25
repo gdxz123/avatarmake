@@ -1,0 +1,47 @@
+#contentSVG {
+	background:#008DC5;
+}
+/*button渲染*/
+.button{
+	float:left;
+	margin:5px;
+	padding:15px;
+	height:30px;
+	background:#d3d3d3;
+	font-family: "微软雅黑";
+	text-align: center;
+	line-height: 30px;
+	cursor:pointer;
+	border-radius: 5px;
+}
+
+/*参考坐标轴*/
+#coordinate {
+	border:1px solid red;
+	position:absolute;
+	left:50px;
+	top:70px;
+	width:140px;
+	height:140px;
+}
+.mouthPath {
+	stroke:#000;
+	stroke-width:3;
+	stroke-linecap:round;
+	stroke-linejoin:round;
+	stroke-miterlimit:10;
+}
+.mouthPath2{
+	stroke:#000;
+	stroke-width:3;
+}
+.mouthColor {
+	fill:#ec632f;
+}
+.eyePath{
+	stroke:#000;
+	stroke-width:5;
+	stroke-linecap:round;
+	stroke-linejoin:round;
+	stroke-miterlimit:10;
+}
