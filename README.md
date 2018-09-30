@@ -15,5 +15,5 @@ the materials cracked from some app and I coded this project just for learn,if t
 ### Contribution
 - gdxz123
 
-###License
+### License
 avatarmake is available under the MIT license. See the LICENSE file for more info.
