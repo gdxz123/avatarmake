@@ -1,4 +1,4 @@
-# avatarmake
+# Avatarmake
 
 ### easily make your own cartoon avatar by using SVG.
 
@@ -11,6 +11,8 @@ Using SVG(Scalable Vector Graphics) advantage
 3.Vector
 
 the materials cracked from some app and I coded this project just for learn,if torted somebody,please let me know,i will delete it immediately.
+
+!(https://oscimg.oschina.net/oscnet/d0e3bac5f5fe8d07a4cae3e0378431b6cd1.jpg)[应用截图]
 
 ### Contribution
 - gdxz123
