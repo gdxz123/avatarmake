@@ -12,7 +12,7 @@ Using SVG(Scalable Vector Graphics) advantage
 
 the materials cracked from some app and I coded this project just for learn,if torted somebody,please let me know,i will delete it immediately.
 
-![应用截图](https://oscimg.oschina.net/oscnet/d0e3bac5f5fe8d07a4cae3e0378431b6cd1.jpg)
+![截图](https://oscimg.oschina.net/oscnet/d0e3bac5f5fe8d07a4cae3e0378431b6cd1.jpg)
 
 ### Contribution
 - gdxz123
