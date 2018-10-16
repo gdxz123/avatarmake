@@ -1,6 +1,6 @@
 # Avatarmake
 
-### easily make your own cartoon avatar by using SVG.
+### Easily make your own cartoon avatar by using SVG.
 
 Using SVG(Scalable Vector Graphics) advantage
 
