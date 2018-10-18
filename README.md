@@ -4,7 +4,7 @@
 
 Using SVG(Scalable Vector Graphics) advantage
 
-1.small capacity
+1.10+ time smaller than bitmap
 
 2.can change path and color easily
 
