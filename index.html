@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>素材检测Beta2</title>
+	<title>人物</title>
 	<!--script_file-->
 	<script src="lib/d3.v3.min.js"></script>
 	<script src="lib/zepto.min.js"></script>
@@ -200,15 +200,15 @@ var cloth=bodySVG.append("g").attr("id","cloth");
 
 var personTag1={
 	"sexual":{"id":0},
-	"hair":{"id":20000,"color":"#F29600"},
-	"face":{"id":20000,"color":"#F4CDA7"},
+	"hair":{"id":1,"color":"#F29600"},
+	"face":{"id":1,"color":"#F4CDA7"},
 	"mouth":{"id":2},
-	"eye":{"id":20010},
+	"eye":{"id":1},
 	"eyebrow":{"id":1},
 	"hat":{"id":0},
 	"background":{"id":0},
 	"hobby":{"id":0},
-	"cloth":{"id":22},
+	"cloth":{"id":1},
 	"bubble":{"id":0},
 	"feature":{"id":0},
 	"glass":{"id":0},
@@ -241,20 +241,20 @@ function initHeadEdit(personTag1){
 //人物初始化
 function personInitA() {
 	bodyChange(1);
-	hairChange(hairTag.id);
-	mouthChange(mouthTag.id);
-	eyeChange(eyeTag.id);
-	eyebrowChange(eyebrowTag.id);
-	noseChange(noseTag.id);
-	expressChange(expressTag.id);
-	faceChange(faceTag.id);
-	hatChange(hatTag.id);
-	backgroundChange(backgroundTag.id);
-	hobbyChange(hobbyTag.id);
-	clothChange(clothTag.id);
-	bubbleChange(bubbleTag.id);
-	featureChange(featureTag.id);
-	glassChange(glassTag.id);
+	hairChange(1);
+	mouthChange(1);
+	eyeChange(1);
+	eyebrowChange(1);
+	// noseChange(1);
+	expressChange(1);
+	// faceChange(1);
+	hatChange(1);
+	backgroundChange(1);
+	hobbyChange(1);
+	clothChange(1);
+	bubbleChange(1);
+	featureChange(1);
+	glassChange(1);
 }
 function recordTag(person1Tag,person2Tag){
 	sexTag.id=person1Tag.sexual.id;
@@ -544,17 +544,17 @@ function initSmallPicAll(){
 </script>
 
 <div id="changeIdDiv">
-	头发：<input type="text" id="hairIdInput" value="20000" class="inputId"><button onclick="try{hairChange(document.getElementById('hairIdInput').value++);}catch(e){alert('木油素材');document.getElementById('hairIdInput').value=20000;}">改变</button>
+	头发：<input type="text" id="hairIdInput" value="20000" class="inputId"><button onclick="try{hairChange(document.getElementById('hairIdInput').value++);}catch(e){alert('木油素材');document.getElementById('hairIdInput').value=1;}">改变</button>
 	<br>
 	发色：<input type="text" id="hairColorIdInput" value="#F29600" class="inputId"><button onclick="try{hairColorChange(document.getElementById('hairColorIdInput').value);}catch(e){alert('木有颜色');document.getElementById('hairColorIdInput').value='#F29600';}">改变</button>
 	<br>
-	脸型：<input type="text" id="faceIdInput" value="20000" class="inputId"><button onclick="try{faceChange(document.getElementById('faceIdInput').value++);}catch(e){alert('木油素材');document.getElementById('faceIdInput').value=20000}">改变</button>
+	脸型：<input type="text" id="faceIdInput" value="20000" class="inputId"><button onclick="try{faceChange(document.getElementById('faceIdInput').value++);}catch(e){alert('木油素材');document.getElementById('faceIdInput').value=1}">改变</button>
 	<br>
 	肤色：<input type="text" id="faceColorIdInput" value="#F4CDA7" class="inputId"><button onclick="try{faceColorChange(document.getElementById('faceColorIdInput').value);}catch(e){alert('木有颜色');document.getElementById('faceColorIdInput').value='#F4CDA7'}">改变</button>
 	<br>
 	眉毛：<input type="text" id="eyebrowIdInput" value="1" class="inputId"><button onclick="try{eyebrowChange(document.getElementById('eyebrowIdInput').value++);}catch(e){alert('木油素材');document.getElementById('eyebrowIdInput').value=1;}">改变</button>
 	<br>
-	眼睛：<input type="text" id="eyeIdInput" value="20010" class="inputId"><button onclick="try{eyeChange(document.getElementById('eyeIdInput').value++);}catch(e){alert('木油素材');document.getElementById('eyeIdInput').value=20010;}">改变</button>
+	眼睛：<input type="text" id="eyeIdInput" value="20010" class="inputId"><button onclick="try{eyeChange(document.getElementById('eyeIdInput').value++);}catch(e){alert('木油素材');document.getElementById('eyeIdInput').value=1;}">改变</button>
 	<br>
 	嘴巴：<input type="text" id="mouthIdInput" value="2" class="inputId"><button onclick="try{mouthChange(document.getElementById('mouthIdInput').value++);}catch(e){alert('木油素材');document.getElementById('mouthIdInput').value=2}">改变</button>
 	<br>
@@ -564,7 +564,7 @@ function initSmallPicAll(){
 	<br>
 	眼镜：<input type="text" id="glassIdInput" value="0" class="inputId"><button onclick="try{glassChange(document.getElementById('glassIdInput').value++);}catch(e){alert('木油素材');document.getElementById('glassIdInput').value=0;}">改变</button>
 	<br>
-	衣服：<input type="text" id="clothIdInput" value="22" class="inputId"><button onclick="try{clothChange(document.getElementById('clothIdInput').value++);}catch(e){alert('木油素材');document.getElementById('clothIdInput').value=22;}">改变</button>
+	衣服：<input type="text" id="clothIdInput" value="22" class="inputId"><button onclick="try{clothChange(document.getElementById('clothIdInput').value++);}catch(e){alert('木油素材');document.getElementById('clothIdInput').value=1;}">改变</button>
 	<br>
 	爱好：<input type="text" id="hobbyIdInput" value="0" class="inputId"><button onclick="try{hobbyChange(document.getElementById('hobbyIdInput').value++);}catch(e){alert('木油素材');document.getElementById('hobbyIdInput').value=0;}">改变</button>
 	<br>
